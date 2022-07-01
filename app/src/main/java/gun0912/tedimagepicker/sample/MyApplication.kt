@@ -1,11 +1,10 @@
 package gun0912.tedimagepicker.sample
 
-
-import androidx.multidex.MultiDexApplication
+import android.app.Application
 
 import com.squareup.leakcanary.LeakCanary
 
-class MyApplication : MultiDexApplication() {
+class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
