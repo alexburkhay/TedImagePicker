@@ -7,8 +7,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
-
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:${versions.gradle}"
@@ -16,24 +15,25 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
+//        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 
     group = GROUP
     version = VERSION_NAME
 
-    plugins.withId("com.vanniktech.maven.publish") {
+    /*plugins.withId("com.vanniktech.maven.publish") {
         mavenPublish {
             sonatypeHost = "S01"
         }
-    }
+    }*/
 }
 
 task clean(type: Delete) {
