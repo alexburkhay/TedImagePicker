@@ -5,6 +5,8 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import com.bumptech.glide.Glide
 import gun0912.tedimagepicker.R
@@ -73,12 +75,27 @@ internal class MediaAdapter(
         }
     }
 
+    /*private fun getImageResize(context: Context): Int {
+        if (mImageResize == 0) {
+            val lm: RecyclerView.LayoutManager = mRecyclerView.getLayoutManager()
+            val spanCount = (lm as GridLayoutManager).spanCount
+            val screenWidth = context.resources.displayMetrics.widthPixels
+            val availableWidth = screenWidth - context.resources.getDimensionPixelSize(
+                R.dimen.spacin
+            ) * (spanCount - 1)
+            mImageResize = availableWidth / spanCount
+            mImageResize = (mImageResize * mSelectionSpec.thumbnailScale) as Int
+        }
+        return mImageResize
+    }*/
+
     inner class ImageViewHolder(parent: ViewGroup) :
         BaseViewHolder<ItemGalleryMediaBinding, Media>(parent, R.layout.item_gallery_media) {
 
         init {
             binding.run {
                 selectType = builder.selectType
+
                 viewZoomOut.setOnClickListener {
                     val item = getItem(adapterPosition.takeIf { it != NO_POSITION }
                         ?: return@setOnClickListener)
@@ -110,8 +127,8 @@ internal class MediaAdapter(
         private fun setVideoDuration(uri: Uri) = executorService.execute {
             val durationMills = uri.getVideoDuration() ?: return@execute
             val hours = TimeUnit.MILLISECONDS.toHours(durationMills)
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMills)
-            val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMills)
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMills - TimeUnit.HOURS.toMillis(hours))
+            val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMills - TimeUnit.MINUTES.toMillis(minutes))
             binding.duration =
                 if (hours > 0) {
                     String.format("%d:%02d:%02d", hours, minutes, seconds)
@@ -152,7 +169,12 @@ internal class MediaAdapter(
     ) {
 
         init {
-            binding.ivImage.setImageResource(builder.cameraTileImageResId)
+            binding.ivImage.setCompoundDrawablesRelativeWithIntrinsicBounds(null, ResourcesCompat.getDrawable(binding.ivImage.resources, builder.cameraTileImageResId, null), null, null)
+            binding.ivImage.setCompoundDrawableTintList(
+                ContextCompat.getColorStateList(
+                    binding.ivImage.context,
+                    R.color.ted_image_capture
+                ))
             itemView.setBackgroundResource(builder.cameraTileBackgroundResId)
         }
 

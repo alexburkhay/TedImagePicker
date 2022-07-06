@@ -21,19 +21,24 @@ internal abstract class BaseRecyclerViewAdapter<D, VH : BaseViewHolder<ViewDataB
     }
 
     open fun replaceAll(items: List<D>, useDiffCallback: Boolean = false) {
-        val diffCallback = BaseDiffUtilCallback(this.items, items)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        this.items.run {
-            clear()
-            addAll(items)
-        }
         if (useDiffCallback) {
+            val diffCallback = BaseDiffUtilCallback(this.items, items)
+            val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+            this.items.run {
+                clear()
+                addAll(items)
+            }
+
             diffResult.dispatchUpdatesTo(this)
         } else {
+            this.items.run {
+                clear()
+                addAll(items)
+            }
+
             notifyDataSetChanged()
         }
-
     }
 
 

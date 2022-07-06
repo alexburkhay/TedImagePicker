@@ -22,6 +22,8 @@
     <color name="ted_image_picker_selected_media_clear_background">#d0909090</color>
     <color name="ted_image_picker_scroller">@color/ted_image_picker_primary</color>
     <color name="ted_image_picker_scroller_background">#fafafa</color>
+    <color name="ted_image_item_placeholder">#EAEEF4</color>
+    <color name="ted_image_capture">#424242</color>
 
     <color name="ted_image_picker_zoom_background">#defafafa</color>
 

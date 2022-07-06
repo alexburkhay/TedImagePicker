@@ -49,15 +49,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:overScrollMode="never"
-                android:visibility="invisible"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:visibility="visible"
                 tools:listitem="@layout/item_gallery_media"
                 tools:visibility="visible" />
 
-            <gun0912.tedimagepicker.base.FastScroller
+            <!--<gun0912.tedimagepicker.base.FastScroller
                 android:id="@+id/fast_scroller"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="end" />
+                android:layout_gravity="end" />-->
         </FrameLayout>
     </LinearLayout>
 </layout>

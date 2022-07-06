@@ -1,11 +1,16 @@
 package gun0912.tedimagepicker.binding
 
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import gun0912.tedimagepicker.R
 import gun0912.tedimagepicker.base.BaseRecyclerViewAdapter
 
 internal class DataBindingAdapter {
@@ -15,9 +20,16 @@ internal class DataBindingAdapter {
         @JvmStatic
         fun loadImage(imageView: ImageView, uri: Uri) {
             Glide.with(imageView.context)
+                .asBitmap() // some .jpeg files are actually gif
                 .load(uri)
-                .thumbnail(0.1f)
-                .dontAnimate()
+                /*.thumbnail(0.1f)
+                .dontAnimate()*/
+                .apply(
+                    RequestOptions()
+                        .override(imageView.width, imageView.height)
+                        .placeholder(ColorDrawable(imageView.context.getColor(R.color.ted_image_item_placeholder)))
+                        .centerCrop()
+                )
                 .into(imageView)
         }
 

@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import gun0912.tedimagepicker.builder.TedImagePicker
 import gun0912.tedimagepicker.builder.TedRxImagePicker
+import gun0912.tedimagepicker.builder.type.AlbumType
+import gun0912.tedimagepicker.builder.type.MediaType
 import gun0912.tedimagepicker.sample.databinding.ActivityMainBinding
 import gun0912.tedimagepicker.sample.databinding.ItemImageBinding
 
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
                 //.buttonTextColor(R.color.sample_yellow)
                 .errorListener { message -> Log.d("ted", "message: $message") }
                 .cancelListener { Log.d("ted", "image select cancel") }
+                .zoomIndicator(false)
                 .selectedUri(selectedUriList)
                 .startMultiImage { list: List<Uri> -> showMultiImage(list) }
         }
@@ -66,6 +69,8 @@ class MainActivity : AppCompatActivity() {
     private fun setRxMultiButton() {
         binding.btnRxMulti.setOnClickListener {
             TedRxImagePicker.with(this)
+                .albumType(AlbumType.DROP_DOWN)
+                .mediaType(MediaType.VIDEO)
                 .startMultiImage()
                 .subscribe(this::showMultiImage, Throwable::printStackTrace)
         }

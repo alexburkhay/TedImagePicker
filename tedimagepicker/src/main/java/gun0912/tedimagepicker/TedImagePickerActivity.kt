@@ -9,7 +9,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -45,7 +44,6 @@ import io.reactivex.schedulers.Schedulers
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 
 
 internal class TedImagePickerActivity : AppCompatActivity() {
@@ -144,8 +142,7 @@ internal class TedImagePickerActivity : AppCompatActivity() {
                 if (!isRefresh) {
                     setSelectedUriList(builder.selectedUriList)
                 }
-                binding.layoutContent.rvMedia.visibility = View.VISIBLE
-
+//                binding.layoutContent.rvMedia.visibility = View.VISIBLE
             }
     }
 
@@ -218,12 +215,15 @@ internal class TedImagePickerActivity : AppCompatActivity() {
 
         }
 
+
         binding.layoutContent.rvMedia.run {
             layoutManager = GridLayoutManager(this@TedImagePickerActivity, IMAGE_SPAN_COUNT)
-            addItemDecoration(GridSpacingItemDecoration(IMAGE_SPAN_COUNT, 8))
+            addItemDecoration(GridSpacingItemDecoration(IMAGE_SPAN_COUNT, resources.getDimensionPixelSize(R.dimen.media_grid_spacing)))
             itemAnimator = null
             adapter = mediaAdapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            setHasFixedSize(true)
+
+            /*addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
@@ -240,10 +240,10 @@ internal class TedImagePickerActivity : AppCompatActivity() {
                         binding.layoutContent.fastScroller.setBubbleText(dateString)
                     }
                 }
-            })
+            })*/
         }
 
-        binding.layoutContent.fastScroller.recyclerView = binding.layoutContent.rvMedia
+//        binding.layoutContent.fastScroller.recyclerView = binding.layoutContent.rvMedia
 
     }
 
