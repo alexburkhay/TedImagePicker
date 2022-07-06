@@ -80,6 +80,8 @@ open class TedImagePickerBaseBuilder<out B : TedImagePickerBaseBuilder<B>>(
     internal var finishExitAnim: Int? = null,
     internal var screenOrientation: Int = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
     internal var showVideoDuration: Boolean = true,
+
+    internal var cameraPermissionError: String? = null,
 ) : Parcelable {
 
 
@@ -90,7 +92,7 @@ open class TedImagePickerBaseBuilder<out B : TedImagePickerBaseBuilder<B>>(
     protected var onMultiSelectedListener: OnMultiSelectedListener? = null
 
     @IgnoredOnParcel
-    protected var onErrorListener: OnErrorListener? = null
+    var onErrorListener: OnErrorListener? = null
 
     @IgnoredOnParcel
     protected var imageSelectCancelListener: ImageSelectCancelListener? = null
@@ -271,6 +273,11 @@ open class TedImagePickerBaseBuilder<out B : TedImagePickerBaseBuilder<B>>(
         if (albumType == AlbumType.DROP_DOWN) {
             showTitle(false)
         }
+        return this as B
+    }
+
+    fun cameraPermissionErrorMessage(cameraPermissionError: String?): B {
+        this.cameraPermissionError = cameraPermissionError
         return this as B
     }
 

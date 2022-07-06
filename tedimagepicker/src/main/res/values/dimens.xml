@@ -21,7 +21,7 @@
     <dimen name="list_item_container_padding">16dp</dimen>
     <dimen name="list_item_container_padding_small">8dp</dimen>
 
-    <dimen name="list_item_avatar_size_small">24dp</dimen>
+    <dimen name="list_item_media_badge_size">24dp</dimen>
     <dimen name="list_item_avatar_size">40dp</dimen>
     <dimen name="list_item_avatar_size_large">56dp</dimen>
     <dimen name="list_item_avatar_size_xlarge">72dp</dimen>

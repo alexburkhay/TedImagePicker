@@ -6,4 +6,5 @@
     <string name="ted_image_picker_max_count">You can not add more</string>
     <string name="ted_image_picker_min_count">You have to select images</string>
     <string name="ted_image_grid_capture">Camera</string>
+    <string name="error_no_video_activity">No App found supporting video preview</string>
 </resources>

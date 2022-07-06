@@ -1,9 +1,11 @@
 package gun0912.tedimagepicker.base
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import gun0912.tedimagepicker.R
 
 internal abstract class BaseRecyclerViewAdapter<D, VH : BaseViewHolder<ViewDataBinding, D>>(private var headerCount: Int = 0) :
     RecyclerView.Adapter<VH>() {
@@ -13,7 +15,9 @@ internal abstract class BaseRecyclerViewAdapter<D, VH : BaseViewHolder<ViewDataB
     var onItemClickListener: OnItemClickListener<D>? = null
 
     interface OnItemClickListener<D> {
-        fun onItemClick(data: D, itemPosition: Int, layoutPosition: Int)
+        fun onItemClick(data: D, itemPosition: Int, layoutPosition: Int, itemView: View)
+
+        fun onItemSelected(data: D, itemPosition: Int, layoutPosition: Int)
 
         fun onHeaderClick() {
             // no-op
@@ -64,11 +68,18 @@ internal abstract class BaseRecyclerViewAdapter<D, VH : BaseViewHolder<ViewDataB
                         listener.onItemClick(
                             getItem(adapterPosition),
                             getItemPosition(adapterPosition),
-                            adapterPosition
+                            adapterPosition,
+                            it
                         )
                     } else if (adapterPosition < headerCount) {
                         listener.onHeaderClick()
                     }
+                }
+
+                itemView.findViewById<ViewGroup>(R.id.fl_selector)?.setOnClickListener {
+                    listener.onItemSelected(getItem(adapterPosition),
+                        getItemPosition(adapterPosition),
+                        adapterPosition)
                 }
             }
         }

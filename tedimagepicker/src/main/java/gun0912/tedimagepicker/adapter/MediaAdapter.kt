@@ -1,6 +1,8 @@
 package gun0912.tedimagepicker.adapter
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.view.ViewGroup
@@ -22,6 +24,7 @@ import gun0912.tedimagepicker.zoom.TedImageZoomActivity
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+
 
 internal class MediaAdapter(
     private val activity: Activity,
@@ -95,10 +98,21 @@ internal class MediaAdapter(
         init {
             binding.run {
                 selectType = builder.selectType
+                mediaType = builder.mediaType
 
                 viewZoomOut.setOnClickListener {
                     val item = getItem(adapterPosition.takeIf { it != NO_POSITION }
                         ?: return@setOnClickListener)
+                    if (mediaType == MediaType.VIDEO) {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.setDataAndType(item.uri, "video/*")
+                        try {
+                            activity.startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            ToastUtil.showToast(activity.getString(R.string.error_no_video_activity))
+                        }
+                        return@setOnClickListener
+                    }
                     startZoomActivity(item)
                 }
                 showZoom = false

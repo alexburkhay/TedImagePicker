@@ -1,5 +1,6 @@
 package gun0912.tedimagepicker
 
+import android.Manifest
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
@@ -19,6 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gun0912.tedonactivityresult.model.ActivityResult
+import com.gun0912.tedpermission.TedPermissionResult
+import com.gun0912.tedpermission.rx2.TedPermission
 import com.tedpark.tedonactivityresult.rx2.TedRxOnActivityResult
 import gun0912.tedimagepicker.adapter.AlbumAdapter
 import gun0912.tedimagepicker.adapter.GridSpacingItemDecoration
@@ -38,12 +41,11 @@ import gun0912.tedimagepicker.model.Media
 import gun0912.tedimagepicker.util.GalleryUtil
 import gun0912.tedimagepicker.util.MediaUtil
 import gun0912.tedimagepicker.util.ToastUtil
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 internal class TedImagePickerActivity : AppCompatActivity() {
@@ -176,10 +178,19 @@ internal class TedImagePickerActivity : AppCompatActivity() {
 
         val albumAdapter = albumAdapter.apply {
             onItemClickListener = object : BaseRecyclerViewAdapter.OnItemClickListener<Album> {
-                override fun onItemClick(data: Album, itemPosition: Int, layoutPosition: Int) {
+                override fun onItemClick(
+                    data: Album,
+                    itemPosition: Int,
+                    layoutPosition: Int,
+                    itemView: View
+                ) {
                     this@TedImagePickerActivity.setSelectedAlbum(itemPosition)
                     binding.drawerLayout.close()
                     binding.isAlbumOpened = false
+                }
+
+                override fun onItemSelected(data: Album, itemPosition: Int, layoutPosition: Int) {
+
                 }
             }
         }
@@ -199,8 +210,21 @@ internal class TedImagePickerActivity : AppCompatActivity() {
     private fun setupMediaRecyclerView() {
         mediaAdapter = MediaAdapter(this, builder).apply {
             onItemClickListener = object : BaseRecyclerViewAdapter.OnItemClickListener<Media> {
-                override fun onItemClick(data: Media, itemPosition: Int, layoutPosition: Int) {
+                override fun onItemClick(
+                    data: Media,
+                    itemPosition: Int,
+                    layoutPosition: Int,
+                    itemView: View
+                ) {
                     binding.isAlbumOpened = false
+                    if (builder.selectType == SelectType.SINGLE) {
+                        onItemSelected(data, itemPosition, layoutPosition)
+                    } else {
+                        itemView.findViewById<View>(R.id.view_zoom_out).callOnClick()
+                    }
+                }
+
+                override fun onItemSelected(data: Media, itemPosition: Int, layoutPosition: Int) {
                     this@TedImagePickerActivity.onMediaClick(data.uri)
                 }
 
@@ -269,24 +293,41 @@ internal class TedImagePickerActivity : AppCompatActivity() {
 
     @SuppressLint("CheckResult")
     private fun onCameraTileClick() {
-        val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
-            this@TedImagePickerActivity,
-            builder.mediaType,
-            builder.savedDirectoryName
-        )
-        TedRxOnActivityResult.with(this@TedImagePickerActivity)
-            .startActivityForResult(cameraIntent)
-            .subscribe { activityResult: ActivityResult ->
-                if (activityResult.resultCode == Activity.RESULT_OK) {
-                    MediaUtil.scanMedia(this, uri)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {
-                            loadMedia(true)
-                            onMediaClick(uri)
+        checkPermission(this)
+            .subscribe({ permissionResult ->
+                if (permissionResult.isGranted) {
+                    val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
+                        this@TedImagePickerActivity,
+                        builder.mediaType,
+                        builder.savedDirectoryName
+                    )
+                    TedRxOnActivityResult.with(this@TedImagePickerActivity)
+                        .startActivityForResult(cameraIntent)
+                        .subscribe { activityResult: ActivityResult ->
+                            if (activityResult.resultCode == Activity.RESULT_OK) {
+                                MediaUtil.scanMedia(this, uri)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe {
+                                        loadMedia(true)
+                                        onMediaClick(uri)
+                                    }
+                            }
                         }
+                } else {
+                    val message = builder.cameraPermissionError
+                    if (!message.isNullOrEmpty()) {
+                        ToastUtil.showToast(message)
+                    }
                 }
-            }
+            }, { throwable -> builder.onErrorListener?.onError(throwable) })
+    }
+
+    private fun checkPermission(context: Context): Single<TedPermissionResult> {
+        val permissions = arrayOf(Manifest.permission.CAMERA)
+        return TedPermission.create()
+            .setPermissions(*permissions)
+            .request()
     }
 
 

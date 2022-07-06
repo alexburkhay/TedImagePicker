@@ -61,6 +61,9 @@ class MainActivity : AppCompatActivity() {
     private fun setRxSingleButton() {
         binding.btnRxSingle.setOnClickListener {
             TedRxImagePicker.with(this)
+                .albumType(AlbumType.DROP_DOWN)
+                .mediaType(MediaType.VIDEO)
+                .zoomIndicator(true)
                 .start()
                 .subscribe(this::showSingleImage, Throwable::printStackTrace)
         }
@@ -69,8 +72,6 @@ class MainActivity : AppCompatActivity() {
     private fun setRxMultiButton() {
         binding.btnRxMulti.setOnClickListener {
             TedRxImagePicker.with(this)
-                .albumType(AlbumType.DROP_DOWN)
-                .mediaType(MediaType.VIDEO)
                 .startMultiImage()
                 .subscribe(this::showMultiImage, Throwable::printStackTrace)
         }

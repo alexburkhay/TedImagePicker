@@ -25,6 +25,10 @@
             type="SelectType" />
 
         <variable
+            name="mediaType"
+            type="gun0912.tedimagepicker.builder.type.MediaType" />
+
+        <variable
             name="showZoom"
             type="boolean" />
 
@@ -73,18 +77,23 @@
                     android:background="@color/ted_image_picker_selected_foreground"
                     android:visibility="@{isSelected, default=gone}" />
 
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Body1"
-                    android:layout_width="@dimen/list_item_avatar_size_small"
-                    android:layout_height="@dimen/list_item_avatar_size_small"
-                    android:layout_gravity="end"
-                    android:layout_margin="@dimen/default_padding_small"
-                    android:background="@{isSelected? @drawable/bg_multi_image_selected : @drawable/bg_multi_image_unselected}"
-                    android:gravity="center"
-                    android:text="@{isSelected? String.valueOf(selectedNumber) : ``}"
-                    android:textColor="@color/white"
-                    tools:background="@drawable/bg_multi_image_selected"
-                    tools:text="5" />
+                <FrameLayout
+                    android:id="@+id/fl_selector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end">
+                    <TextView
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="@dimen/list_item_media_badge_size"
+                        android:layout_height="@dimen/list_item_media_badge_size"
+                        android:layout_margin="@dimen/default_padding_small"
+                        android:background="@{isSelected? @drawable/bg_multi_image_selected : @drawable/bg_multi_image_unselected}"
+                        android:gravity="center"
+                        android:text="@{isSelected? String.valueOf(selectedNumber) : ``}"
+                        android:textColor="@color/white"
+                        tools:background="@drawable/bg_multi_image_selected"
+                        tools:text="5" />
+                </FrameLayout>
             </FrameLayout>
 
             <FrameLayout
