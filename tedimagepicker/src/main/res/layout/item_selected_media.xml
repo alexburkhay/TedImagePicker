@@ -4,7 +4,6 @@
     xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="uri"
             type="android.net.Uri" />
