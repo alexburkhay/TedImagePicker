@@ -123,7 +123,7 @@ open class TedImagePickerBaseBuilder<out B : TedImagePickerBaseBuilder<B>>(
             arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         return TedPermission.create()
-            .setPermissions(permissions)
+            .setPermissions(*permissions)
             .request()
     }
 
