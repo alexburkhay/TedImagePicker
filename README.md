@@ -2,7 +2,7 @@
 
 TedImagePicker is **simple/beautiful/smart** image picker
 
-- Support Image/Video
+- Support Image/Video/Image&Video
 - Support Single/Multi select
 - Support more configuration option
 
@@ -149,7 +149,7 @@ TedRxImagePicker.with(this)
 
 |      Function        |    Description    | 
 | ----------------------- | ---------------- |
-| `mediaType(MediaType)` | MediaType.IMAGE / MediaType.VIDEO |
+| `mediaType(MediaType)` | MediaType.IMAGE / MediaType.VIDEO / MediaType.IMAGE_AND_VIDEO |
 | `cameraTileBackground(R.color.xxx)`| camera Tile Background Color |
 | `cameraTileImage(R.drawable.xxx)` | camera tile image |
 | `showCameraTile(Boolean)` default `true` | show camera tile |
@@ -160,6 +160,7 @@ TedRxImagePicker.with(this)
 | `zoomIndicator(Boolean) (default: true)`| zoom indicator |
 | `image()` | image |
 | `video()` | video |
+| `imageAndVideo()` | image and video |
 | `imageCountTextFormat(String) (default: %s)`: `%s장`,  `Count: %s`| image count text format |
 | `savedDirectoryName(String)` | saved directory name from take picture using camera |
 | `startAnimation(Int, Int)` | start animation |
@@ -203,6 +204,12 @@ TedRxImagePicker.with(this)
 
 - You have to enable databinding
 - Read [this](https://github.com/ParkSangGwon/TedImagePicker/blob/master/README.md#1enable-databinding)
+
+### - I'm using targetSdkVersion less than 33 and it doesn't work
+- You have to use `targetSdkVersion 33`
+- If you use targetSdkVersion 32, you can not support SDK 33(Android OS 13) device.
+- these day, there are so many android os 13 device.
+- So you have to use targetSdkVersion 33
 
 </br></br>
 

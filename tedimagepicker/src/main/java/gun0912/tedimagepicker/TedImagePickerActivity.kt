@@ -30,6 +30,8 @@ import gun0912.tedimagepicker.adapter.SelectedMediaAdapter
 import gun0912.tedimagepicker.base.BaseRecyclerViewAdapter
 import gun0912.tedimagepicker.builder.TedImagePickerBaseBuilder
 import gun0912.tedimagepicker.builder.type.AlbumType
+import gun0912.tedimagepicker.builder.type.CameraMedia
+import gun0912.tedimagepicker.builder.type.MediaType
 import gun0912.tedimagepicker.builder.type.SelectType
 import gun0912.tedimagepicker.databinding.ActivityTedImagePickerBinding
 import gun0912.tedimagepicker.extenstion.close
@@ -296,21 +298,26 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         checkPermission(this)
             .subscribe({ permissionResult ->
                 if (permissionResult.isGranted) {
-                    val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
-                        this@TedImagePickerActivity,
-                        builder.mediaType,
-                        builder.savedDirectoryName
-                    )
-                    TedRxOnActivityResult.with(this@TedImagePickerActivity)
-                        .startActivityForResult(cameraIntent)
-                        .subscribe { activityResult: ActivityResult ->
-                            if (activityResult.resultCode == Activity.RESULT_OK) {
-                                MediaUtil.scanMedia(this, uri)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe {
-                                        loadMedia(true)
-                                        onMediaClick(uri)
+                val cameraMedia = when(builder.mediaType){
+                    MediaType.IMAGE -> CameraMedia.IMAGE
+                    MediaType.VIDEO -> CameraMedia.VIDEO
+                    MediaType.IMAGE_AND_VIDEO -> CameraMedia.IMAGE
+                }
+                val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
+                    this@TedImagePickerActivity,
+                    cameraMedia,
+                    builder.savedDirectoryName
+                )
+                TedRxOnActivityResult.with(this@TedImagePickerActivity)
+                    .startActivityForResult(cameraIntent)
+                    .subscribe { activityResult: ActivityResult ->
+                        if (activityResult.resultCode == Activity.RESULT_OK) {
+                            MediaUtil.scanMedia(this, uri)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe {
+                                    loadMedia(true)
+                                    onMediaClick(uri)
                                     }
                             }
                         }
@@ -522,4 +529,3 @@ internal class TedImagePickerActivity : AppCompatActivity() {
     }
 
 }
-
