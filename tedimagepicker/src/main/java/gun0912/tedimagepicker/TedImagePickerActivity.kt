@@ -303,8 +303,8 @@ internal class TedImagePickerActivity : AppCompatActivity() {
                 if (permissionResult.isGranted) {
                     if (builder.mediaType == MediaType.IMAGE_AND_VIDEO) {
                         val options = arrayOf<String>(
-                            getString(gun0912.tedimagepicker.R.string.photo),
-                            getString(gun0912.tedimagepicker.R.string.video)
+                            getString(gun0912.tedimagepicker.R.string.ted_image_picker_photo),
+                            getString(gun0912.tedimagepicker.R.string.ted_image_picker_video)
                         )
 
                         val alertBuilder: AlertDialog.Builder = Builder(this)
