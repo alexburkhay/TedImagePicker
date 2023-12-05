@@ -5,7 +5,10 @@ import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.AlertDialog.Builder
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -298,29 +301,27 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         checkPermission(this)
             .subscribe({ permissionResult ->
                 if (permissionResult.isGranted) {
-                val cameraMedia = when(builder.mediaType){
-                    MediaType.IMAGE -> CameraMedia.IMAGE
-                    MediaType.VIDEO -> CameraMedia.VIDEO
-                    MediaType.IMAGE_AND_VIDEO -> CameraMedia.IMAGE
-                }
-                val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
-                    this@TedImagePickerActivity,
-                    cameraMedia,
-                    builder.savedDirectoryName
-                )
-                TedRxOnActivityResult.with(this@TedImagePickerActivity)
-                    .startActivityForResult(cameraIntent)
-                    .subscribe { activityResult: ActivityResult ->
-                        if (activityResult.resultCode == Activity.RESULT_OK) {
-                            MediaUtil.scanMedia(this, uri)
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe {
-                                    loadMedia(true)
-                                    onMediaClick(uri)
-                                    }
-                            }
-                        }
+                    if (builder.mediaType == MediaType.IMAGE_AND_VIDEO) {
+                        val options = arrayOf<String>(
+                            getString(gun0912.tedimagepicker.R.string.photo),
+                            getString(gun0912.tedimagepicker.R.string.video)
+                        )
+
+                        val alertBuilder: AlertDialog.Builder = Builder(this)
+                        alertBuilder.setTitle(getString(gun0912.tedimagepicker.R.string.ted_image_grid_capture))
+                        alertBuilder.setItems(
+                            options,
+                            DialogInterface.OnClickListener { dialog, which ->
+                                when (which) {
+                                    0 -> captureMedia(MediaType.IMAGE)
+                                    1 -> captureMedia(MediaType.VIDEO)
+                                }
+                            })
+                        alertBuilder.show()
+                    } else {
+                        captureMedia(builder.mediaType)
+                    }
+
                 } else {
                     val message = builder.cameraPermissionError
                     if (!message.isNullOrEmpty()) {
@@ -335,6 +336,37 @@ internal class TedImagePickerActivity : AppCompatActivity() {
         return TedPermission.create()
             .setPermissions(*permissions)
             .request()
+    }
+
+    @SuppressLint("CheckResult")
+    private fun captureMedia(mediaType: MediaType) {
+        val cameraMedia = when(mediaType){
+            MediaType.IMAGE -> CameraMedia.IMAGE
+            MediaType.VIDEO -> CameraMedia.VIDEO
+            MediaType.IMAGE_AND_VIDEO -> CameraMedia.IMAGE
+        }
+        val savedDirectoryName = when(cameraMedia){
+            CameraMedia.IMAGE -> CameraMedia.IMAGE.savedDirectoryName
+            CameraMedia.VIDEO -> CameraMedia.VIDEO.savedDirectoryName
+        }
+        val (cameraIntent, uri) = MediaUtil.getMediaIntentUri(
+            this@TedImagePickerActivity,
+            cameraMedia,
+            savedDirectoryName
+        )
+        TedRxOnActivityResult.with(this@TedImagePickerActivity)
+            .startActivityForResult(cameraIntent)
+            .subscribe { activityResult: ActivityResult ->
+                if (activityResult.resultCode == Activity.RESULT_OK) {
+                    MediaUtil.scanMedia(this, uri)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe {
+                            loadMedia(true)
+                            onMediaClick(uri)
+                        }
+                }
+            }
     }
 
 

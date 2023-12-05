@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore.Video
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
@@ -106,7 +107,7 @@ internal class MediaAdapter(
                 viewZoomOut.setOnClickListener {
                     val item = getItem(adapterPosition.takeIf { it != NO_POSITION }
                         ?: return@setOnClickListener)
-                    if (mediaType == MediaType.VIDEO) {
+                    if (item is Media.Video) {
                         val intent = Intent(Intent.ACTION_VIEW)
                         intent.setDataAndType(item.uri, "video/*")
                         try {
@@ -133,6 +134,7 @@ internal class MediaAdapter(
 
                 showZoom = builder.showZoomIndicator && media is Media.Image
                 showDuration = builder.showVideoDuration && media is Media.Video
+                showVideoIcon = media is Media.Video
                 if (data is Media.Video) {
                     binding.duration = data.durationText
                 }
